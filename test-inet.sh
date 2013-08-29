@@ -2,17 +2,27 @@
 IP=$1
 st=0
 path_log=$2
-cycle=$3
+loop=$3
 
 if ! [ ${IP} ]; then
  IP=8.8.8.8
 fi
 
-if ! [ ${cycle} ]; then
- cycle=0
+if ! [ ${loop} ]; then
+ loop=0
 fi
 
-cycle_ping() {
+start_help() {
+  echo "Script to verify access to the Internet.
+
+Usage: test-inet.sh [IP] [path_log] [use_a_loop]
+
+IP         - Destination IP
+path_log   - The path to save the log (optional parameter).
+use_a_loop - Execute in a loop = 1 (optional parameter)"
+}
+
+start_ping() {
   res=1
   /bin/ping ${IP} -c 2 > /dev/null 2>&1 && res=0
   datal=`date +%Y%m%d`
@@ -39,10 +49,15 @@ cycle_ping() {
   sleep 2
 }
 
-if [ ${cycle} = 1 ]; then
+if [ ${IP} = "--help" ]; then
+  start_help
+  exit
+fi
+
+if [ ${loop} = 1 ]; then
   while true; do
-    cycle_ping
+    start_ping
   done
 else
-   cycle_ping
+   start_ping
 fi
